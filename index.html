@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drive2Doc</title>
+  <style>
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #66757d;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+      --soft-teal: #e7f2ef;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+    .page { width: min(960px, calc(100% - 36px)); margin: 0 auto; padding: 34px 0 54px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-bottom: 21px; border-bottom: 1px solid var(--line); }
+    .brand { color: var(--navy); font-size: 29px; font-weight: 800; letter-spacing: -1px; }
+    .brand span { color: var(--orange); }
+    .subtitle { margin-top: 4px; color: var(--muted); font-size: 14px; }
+    .hero { display: grid; grid-template-columns: 1fr 0.92fr; gap: 42px; padding: 70px 0 34px; align-items: center; }
+    h1 { margin: 0; max-width: 590px; color: var(--navy); font-size: clamp(34px, 5vw, 51px); line-height: 1.1; letter-spacing: -1.4px; }
+    .hero p { max-width: 595px; margin: 17px 0 0; color: #52616a; font-size: 17px; line-height: 1.62; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .button { display: inline-block; border-radius: 7px; padding: 13px 18px; text-decoration: none; font-size: 15px; font-weight: 700; transition: transform .15s ease, background .15s ease; }
+    .button:hover { transform: translateY(-1px); }
+    .primary { background: var(--teal); color: white; border: 1px solid var(--teal); }
+    .secondary { color: var(--navy); background: white; border: 1px solid var(--navy); }
+    .card { background: white; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 18px rgba(31, 57, 73, .06); padding: 26px; }
+    .card h2 { margin: 0 0 21px; color: var(--navy); font-size: 22px; }
+    .step { display: grid; grid-template-columns: 28px 1fr; gap: 12px; margin-top: 18px; }
+    .bubble { width: 28px; height: 28px; border-radius: 50%; background: var(--soft-teal); color: var(--teal); text-align: center; line-height: 28px; font-size: 13px; font-weight: 800; }
+    .step strong { color: var(--ink); font-size: 15px; }
+    .step p { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .notice { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    footer { margin-top: 35px; padding-top: 18px; color: #748088; font-size: 12px; border-top: 1px solid var(--line); }
+    @media (max-width: 720px) {
+      .page { width: min(100% - 30px, 960px); padding-top: 23px; }
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 48px; }
+      .card { padding: 21px; }
+      header { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand">Drive<span>2</span>Doc</div>
+        <div class="subtitle">Community transportation for medical appointments</div>
+      </div>
+      <a class="button secondary" href="/volunteer">Volunteer to drive</a>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Getting to care should not depend on having a ride.</h1>
+        <p>Drive2Doc connects people who need transportation to scheduled medical appointments with community volunteers who can help them get there.</p>
+        <div class="actions">
+          <a class="button primary" href="/request-ride">Request a ride</a>
+          <a class="button secondary" href="/volunteer">Volunteer to drive</a>
+        </div>
+      </div>
+
+      <section class="card" aria-label="How Drive2Doc works">
+        <h2>How it works</h2>
+        <div class="step">
+          <div class="bubble">1</div>
+          <div><strong>Request a ride</strong><p>Enter an appointment time and pickup location.</p></div>
+        </div>
+        <div class="step">
+          <div class="bubble">2</div>
+          <div><strong>A volunteer accepts</strong><p>An approved volunteer chooses a trip that fits their schedule.</p></div>
+        </div>
+        <div class="step">
+          <div class="bubble">3</div>
+          <div><strong>Confirm the details</strong><p>The rider and volunteer confirm the trip before leaving.</p></div>
+        </div>
+      </section>
+    </section>
+
+    <p class="notice">Drive2Doc supports planned, non-emergency transportation for medical appointments.</p>
+    <footer>Drive2Doc · Community transportation for medical appointments</footer>
+  </main>
+</body>
+</html>
