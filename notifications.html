@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications · Drive2Doc</title>
+
+  <style>
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #62717a;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+      --soft-teal: #edf7f3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(860px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 32px 0 52px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: #6c7a82;
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 36px 0 18px;
+      color: var(--navy);
+      font-size: clamp(32px, 5vw, 39px);
+      letter-spacing: -1px;
+    }
+
+    .notification-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .notification {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+    }
+
+    .notification.unread {
+      border-left: 4px solid var(--teal);
+      background: var(--soft-teal);
+    }
+
+    .notification h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 18px;
+    }
+
+    .notification p {
+      margin: 7px 0 0;
+      color: #52616a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .notification time {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 28px;
+      border: 1px dashed #a7b7bd;
+      border-radius: 10px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      .page {
+        width: min(100% - 28px, 860px);
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand">Drive<span>2</span>Doc</div>
+        <div class="subtitle">Notifications</div>
+      </div>
+
+      <div class="header-actions">
+         <a class="button" href="/">Home</a>
+
+         <a
+          id="notifications-link"
+          class="button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <h1>Your notifications</h1>
+
+    <section id="notification-list" class="notification-list"></section>
+  </main>
+
+  <script>
+    const signedInUser = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    if (!signedInUser || !signedInUser.name) {
+      localStorage.setItem(
+        "drive2doc_after_sign_in",
+        window.location.pathname
+      );
+
+      window.location.href = "/sign-in";
+    }
+
+    const notificationsLink = document.getElementById("notifications-link");
+    const profileLink = document.getElementById("profile-link");
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const notificationDot = document.getElementById("notification-dot");
+    const list = document.getElementById("notification-list");
+
+    function refreshAccountHeader() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const isSignedIn = Boolean(activeUser && activeUser.name);
+
+      notificationsLink.hidden = !isSignedIn;
+      profileLink.hidden = !isSignedIn;
+      signInLink.hidden = isSignedIn;
+      signOutButton.hidden = !isSignedIn;
+
+      if (!isSignedIn) {
+        notificationDot.style.display = "none";
+        return;
+      }
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === activeUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      notificationDot.style.display =
+        unreadCount > 0 ? "inline-block" : "none";
+
+      notificationDot.textContent =
+        unreadCount > 9 ? "9+" : unreadCount;
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+
+      return date.toLocaleString();
+    }
+
+    function renderNotifications() {
+      const allNotifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const userNotifications = allNotifications
+        .filter((notification) => {
+          return notification.recipientName === signedInUser.name;
+        })
+        .sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+      if (userNotifications.length === 0) {
+        list.innerHTML = `
+          <div class="empty">
+            You have no notifications yet.
+          </div>
+        `;
+      } else {
+        list.innerHTML = userNotifications.map((notification) => `
+          <article class="notification ${notification.read ? "" : "unread"}">
+            <h2>${escapeHtml(notification.title)}</h2>
+            <p>${escapeHtml(notification.text)}</p>
+            <time>${escapeHtml(formatDate(notification.createdAt))}</time>
+          </article>
+        `).join("");
+      }
+
+      const updatedNotifications = allNotifications.map((notification) => {
+        if (
+          notification.recipientName === signedInUser.name &&
+          !notification.read
+        ) {
+          return { ...notification, read: true };
+        }
+
+        return notification;
+      });
+
+      localStorage.setItem(
+        "drive2doc_notifications",
+        JSON.stringify(updatedNotifications)
+      );
+    }
+
+    refreshAccountHeader();
+    renderNotifications();
+
+    window.addEventListener("focus", () => {
+      refreshAccountHeader();
+      renderNotifications();
+    });
+  </script>
+</body>
+</html>

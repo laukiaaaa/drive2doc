@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Available Ride Requests · Drive2Doc</title>
+
+  <style>
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #62717a;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+      --soft-teal: #edf7f3;
+      --soft-gold: #fff7df;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(980px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 32px 0 52px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: #6c7a82;
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: white;
+    }
+
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: .52;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 36px 0 10px;
+      color: var(--navy);
+      font-size: clamp(32px, 5vw, 39px);
+      letter-spacing: -1px;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: #52616a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 15px 17px;
+      border: 1px solid #efdaa2;
+      border-left: 4px solid #be8b20;
+      border-radius: 8px;
+      background: var(--soft-gold);
+      color: #6d5728;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .notice.approved {
+      border-color: #c4ded6;
+      border-left-color: var(--teal);
+      background: var(--soft-teal);
+      color: #205d53;
+    }
+
+    .rides {
+      display: grid;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .ride-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 18px rgba(31, 57, 73, .05);
+    }
+
+    .ride-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .ride-card h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 21px;
+    }
+
+    .ride-date {
+      margin-top: 5px;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 20px;
+      margin: 19px 0;
+    }
+
+    .detail {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .detail strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .notes {
+      margin: 0 0 18px;
+      color: #52616a;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .empty {
+      padding: 28px;
+      border: 1px dashed #a7b7bd;
+      border-radius: 10px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 650px) {
+      .page {
+        width: min(100% - 28px, 980px);
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .ride-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .details {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand">Drive<span>2</span>Doc</div>
+        <div class="subtitle">Volunteer ride requests</div>
+      </div>
+
+      <div class="header-actions">
+         <a class="button" href="/">Home</a>
+
+         <a
+          id="notifications-link"
+          class="button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <h1>Available ride requests</h1>
+
+    <p class="intro">
+      Every open ride request appears below. Notifications are reserved for
+      rides that match the availability saved in your volunteer application.
+    </p>
+
+    <div id="verification-notice" class="notice"></div>
+    <section id="rides" class="rides" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const signedInUser = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    if (!signedInUser || !signedInUser.name) {
+      localStorage.setItem(
+        "drive2doc_after_sign_in",
+        window.location.pathname
+      );
+
+      window.location.href = "/sign-in";
+    }
+
+    const notificationsLink = document.getElementById("notifications-link");
+    const profileLink = document.getElementById("profile-link");
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const notificationDot = document.getElementById("notification-dot");
+
+    function refreshAccountHeader() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const isSignedIn = Boolean(activeUser && activeUser.name);
+
+      notificationsLink.hidden = !isSignedIn;
+      profileLink.hidden = !isSignedIn;
+      signInLink.hidden = isSignedIn;
+      signOutButton.hidden = !isSignedIn;
+
+      if (!isSignedIn) {
+        notificationDot.style.display = "none";
+        return;
+      }
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === activeUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      notificationDot.style.display =
+        unreadCount > 0 ? "inline-block" : "none";
+
+      notificationDot.textContent =
+        unreadCount > 9 ? "9+" : unreadCount;
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    refreshAccountHeader();
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function listSupportNeeds(ride) {
+      if (!Array.isArray(ride.mobilityNeeds) || ride.mobilityNeeds.length === 0) {
+        return "None noted";
+      }
+
+      const labels = {
+        cane: "Cane assistance",
+        walker: "Walker assistance",
+        folding_wheelchair: "Folding wheelchair space",
+        door_to_door: "Door-to-door assistance"
+      };
+
+      return ride.mobilityNeeds
+        .map((need) => labels[need] || need)
+        .join(", ");
+    }
+
+    function displayVerificationNotice() {
+      const review = JSON.parse(
+        localStorage.getItem("drive2doc_driver_document_review") || "null"
+      );
+
+      const notice = document.getElementById("verification-notice");
+
+      const approved = Boolean(
+        review &&
+        review.volunteerName === signedInUser.name &&
+        review.overallStatus === "approved"
+      );
+
+      if (approved) {
+        notice.className = "notice approved";
+        notice.textContent =
+          "Your driver verification is approved. You may accept any open ride request below.";
+        return true;
+      }
+
+      notice.className = "notice";
+      notice.innerHTML =
+        'Your driver verification must be approved before you can accept a ride. <a href="/driver-verification">Review your documents</a>.';
+
+      return false;
+    }
+
+    function getAllOpenRides() {
+      const rides = JSON.parse(
+        localStorage.getItem("drive2doc_ride_requests") || "[]"
+      );
+
+      return rides.filter((ride) => ride.status === "open");
+    }
+
+    function addNotification(notification) {
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const exists = notifications.some((existing) => {
+        return (
+          existing.type === notification.type &&
+          existing.recipientName === notification.recipientName &&
+          existing.rideId === notification.rideId
+        );
+      });
+
+      if (!exists) {
+        notifications.push(notification);
+
+        localStorage.setItem(
+          "drive2doc_notifications",
+          JSON.stringify(notifications)
+        );
+      }
+    }
+
+    function renderRides() {
+      const ridesContainer = document.getElementById("rides");
+      const isApproved = displayVerificationNotice();
+      const availableRides = getAllOpenRides();
+
+      if (availableRides.length === 0) {
+        ridesContainer.innerHTML = `
+          <div class="empty">
+            There are no open ride requests right now. New requests will
+            appear here when riders submit them.
+          </div>
+        `;
+        return;
+      }
+
+      ridesContainer.innerHTML = availableRides.map((ride) => `
+        <article class="ride-card">
+          <div class="ride-top">
+            <div>
+              <h2>${escapeHtml(ride.riderName || "Ride request")}</h2>
+
+              <div class="ride-date">
+                ${escapeHtml(ride.appointmentDate || "Date not provided")}
+                ·
+                Pickup at ${escapeHtml(ride.pickupTime || "Time not provided")}
+              </div>
+            </div>
+
+            <button
+              class="button primary accept-button"
+              data-ride-id="${escapeHtml(ride.id)}"
+              ${isApproved ? "" : "disabled"}
+            >
+              Accept ride
+            </button>
+          </div>
+
+          <div class="details">
+            <div class="detail">
+              <strong>Pickup</strong>
+              ${escapeHtml(ride.pickup || "Not provided")}
+            </div>
+
+            <div class="detail">
+              <strong>Destination</strong>
+              ${escapeHtml(ride.destination || "Not provided")}
+            </div>
+
+            <div class="detail">
+              <strong>Appointment</strong>
+              ${escapeHtml(ride.appointmentTime || "Not provided")}
+            </div>
+
+            <div class="detail">
+              <strong>Support needed</strong>
+              ${escapeHtml(listSupportNeeds(ride))}
+            </div>
+
+            <div class="detail">
+              <strong>Return ride</strong>
+              ${ride.returnRide === "yes" ? "Requested" : "Not requested"}
+            </div>
+
+            <div class="detail">
+              <strong>Rider phone</strong>
+              ${escapeHtml(ride.riderPhone || "Not provided")}
+            </div>
+          </div>
+
+          ${
+            ride.notes
+              ? `<p class="notes"><strong>Notes:</strong> ${escapeHtml(ride.notes)}</p>`
+              : ""
+          }
+        </article>
+      `).join("");
+
+      document.querySelectorAll(".accept-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          acceptRide(button.dataset.rideId);
+        });
+      });
+    }
+
+    function acceptRide(rideId) {
+      const review = JSON.parse(
+        localStorage.getItem("drive2doc_driver_document_review") || "null"
+      );
+
+      const approved = Boolean(
+        review &&
+        review.volunteerName === signedInUser.name &&
+        review.overallStatus === "approved"
+      );
+
+      if (!approved) {
+        window.location.href = "/driver-verification";
+        return;
+      }
+
+      const rides = JSON.parse(
+        localStorage.getItem("drive2doc_ride_requests") || "[]"
+      );
+
+      const rideIndex = rides.findIndex((ride) => {
+        return String(ride.id) === String(rideId);
+      });
+
+      if (rideIndex === -1 || rides[rideIndex].status !== "open") {
+        renderRides();
+        return;
+      }
+
+      const ride = rides[rideIndex];
+
+      rides[rideIndex] = {
+        ...ride,
+        status: "accepted",
+        driverName: signedInUser.name,
+        acceptedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(
+        "drive2doc_ride_requests",
+        JSON.stringify(rides)
+      );
+
+      addNotification({
+        id: `ride-accepted-rider-${ride.id}-${Date.now()}`,
+        type: "ride_accepted",
+        recipientName: ride.riderName,
+        rideId: ride.id,
+        title: "Your ride has a volunteer driver",
+        text: `${signedInUser.name} accepted your ride request for ${ride.appointmentDate} at ${ride.pickupTime}.`,
+        createdAt: new Date().toISOString(),
+        read: false
+      });
+
+      addNotification({
+        id: `ride-accepted-driver-${ride.id}-${Date.now()}`,
+        type: "ride_accepted_by_driver",
+        recipientName: signedInUser.name,
+        rideId: ride.id,
+        title: "Ride accepted",
+        text: `You accepted the ride request for ${ride.appointmentDate} at ${ride.pickupTime}.`,
+        createdAt: new Date().toISOString(),
+        read: false
+      });
+
+      refreshAccountHeader();
+      renderRides();
+    }
+
+    renderRides();
+  </script>
+</body>
+</html>

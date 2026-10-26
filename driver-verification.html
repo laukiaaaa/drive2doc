@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driver Verification · Drive2Doc</title>
+
+  <style>
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #62717a;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+      --soft-teal: #edf7f3;
+      --soft-gold: #fff7df;
+      --soft-red: #fff0ed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(860px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 32px 0 52px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: #6c7a82;
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 36px 0 10px;
+      color: var(--navy);
+      font-size: clamp(32px, 5vw, 39px);
+      letter-spacing: -1px;
+    }
+
+    .intro {
+      max-width: 720px;
+      color: #52616a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .card {
+      margin-top: 22px;
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 18px rgba(31, 57, 73, .05);
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 21px;
+    }
+
+    .helper {
+      margin: 8px 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 11px;
+      border: 1px dashed #93aaa3;
+      border-radius: 8px;
+      background: #fbfdfc;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .review-button {
+      width: 100%;
+      margin-top: 19px;
+      padding: 13px 16px;
+      border: 1px solid var(--teal);
+      border-radius: 7px;
+      background: var(--teal);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .review-button:disabled {
+      cursor: wait;
+      opacity: .72;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .result {
+      min-height: 145px;
+      margin-top: 12px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #f8fafb;
+    }
+
+    .result.review {
+      border-color: #f0d7a1;
+      background: var(--soft-gold);
+      color: #755f31;
+    }
+
+    .result.good {
+      border-color: #c4ded6;
+      background: var(--soft-teal);
+      color: #205d53;
+    }
+
+    .result.error {
+      border-color: #ebc5bb;
+      background: var(--soft-red);
+      color: #8c3320;
+    }
+
+    .result h3 {
+      margin: 0 0 7px;
+      font-size: 18px;
+    }
+
+    .result p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .checks {
+      margin: 14px 0 0;
+      padding-left: 19px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .status-card {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid #c4ded6;
+      border-left: 4px solid var(--teal);
+      border-radius: 9px;
+      background: var(--soft-teal);
+    }
+
+    .status-card .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+
+    .status-card h2 {
+      margin-top: 6px;
+    }
+
+    .status-card p {
+      margin: 8px 0 0;
+      color: #52616a;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 650px) {
+      .page {
+        width: min(100% - 28px, 860px);
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .results {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand">Drive<span>2</span>Doc</div>
+        <div class="subtitle">Driver verification</div>
+      </div>
+
+      <div class="header-actions">
+         <a class="button" href="/">Home</a>
+
+         <a
+          id="notifications-link"
+          class="button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <h1>Driver verification</h1>
+
+    <p class="intro">
+      Submit a current driver’s license and vehicle registration. This demo
+      approves valid-format files automatically after three seconds.
+    </p>
+
+    <section class="card">
+      <h2>Required documents</h2>
+
+      <p class="helper">
+        Accepted formats are PDF, PNG, and JPG. Each file must be smaller
+        than 10 MB.
+      </p>
+
+      <div class="results">
+        <div>
+          <label for="license-file">Driver’s license</label>
+
+          <input
+            id="license-file"
+            type="file"
+            accept=".pdf,image/png,image/jpeg"
+          >
+
+          <div id="license-result" class="result">
+            <h3>Driver’s license</h3>
+            <p>Select a current license document to begin review.</p>
+          </div>
+        </div>
+
+        <div>
+          <label for="registration-file">Vehicle registration</label>
+
+          <input
+            id="registration-file"
+            type="file"
+            accept=".pdf,image/png,image/jpeg"
+          >
+
+          <div id="registration-result" class="result">
+            <h3>Vehicle registration</h3>
+            <p>Select a current registration document to begin review.</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="review-button" class="review-button" type="button">
+        Review documents
+      </button>
+    </section>
+
+    <section class="status-card">
+      <div class="eyebrow">Verification status</div>
+      <h2 id="overall-status">Documents needed</h2>
+
+      <p id="overall-status-text">
+        Submit both documents to continue with the volunteer application.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const signedInUser = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    if (!signedInUser || !signedInUser.name) {
+      localStorage.setItem(
+        "drive2doc_after_sign_in",
+        window.location.pathname
+      );
+
+      window.location.href = "/sign-in";
+    }
+
+    const notificationsLink = document.getElementById("notifications-link");
+    const profileLink = document.getElementById("profile-link");
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const notificationDot = document.getElementById("notification-dot");
+
+    function refreshAccountHeader() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const isSignedIn = Boolean(activeUser && activeUser.name);
+
+      notificationsLink.hidden = !isSignedIn;
+      profileLink.hidden = !isSignedIn;
+      signInLink.hidden = isSignedIn;
+      signOutButton.hidden = !isSignedIn;
+
+      if (!isSignedIn) {
+        notificationDot.style.display = "none";
+        return;
+      }
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === activeUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      notificationDot.style.display =
+        unreadCount > 0 ? "inline-block" : "none";
+
+      notificationDot.textContent =
+        unreadCount > 9 ? "9+" : unreadCount;
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    refreshAccountHeader();
+
+    const allowedTypes = [
+      "application/pdf",
+      "image/png",
+      "image/jpeg"
+    ];
+
+    const maxBytes = 10 * 1024 * 1024;
+    const licenseInput = document.getElementById("license-file");
+    const registrationInput = document.getElementById("registration-file");
+    const licenseResult = document.getElementById("license-result");
+    const registrationResult = document.getElementById("registration-result");
+    const overallStatus = document.getElementById("overall-status");
+    const overallStatusText = document.getElementById("overall-status-text");
+    const reviewButton = document.getElementById("review-button");
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function checkDocument(file, documentName) {
+      if (!file) {
+        return {
+          ok: false,
+          state: "review",
+          title: `${documentName} needed`,
+          text: `Select a current ${documentName.toLowerCase()} document.`,
+          details: []
+        };
+      }
+
+      if (!allowedTypes.includes(file.type)) {
+        return {
+          ok: false,
+          state: "error",
+          title: "Unsupported file type",
+          text: "Please select a PDF, PNG, or JPG file.",
+          details: []
+        };
+      }
+
+      if (file.size > maxBytes) {
+        return {
+          ok: false,
+          state: "error",
+          title: "File is too large",
+          text: "Please select a file smaller than 10 MB.",
+          details: []
+        };
+      }
+
+      return {
+        ok: true,
+        state: "good",
+        title: "Document ready for review",
+        text: "The selected file has an accepted format and size.",
+        details: [
+          `Selected file: ${file.name}`,
+          "Accepted file format",
+          "Status: Ready for review"
+        ]
+      };
+    }
+
+    function displayResult(element, result) {
+      element.className = `result ${result.state}`;
+
+      element.innerHTML = `
+        <h3>${escapeHtml(result.title)}</h3>
+        <p>${escapeHtml(result.text)}</p>
+        ${
+          result.details.length
+            ? `
+              <ul class="checks">
+                ${result.details
+                  .map((detail) => `<li>${escapeHtml(detail)}</li>`)
+                  .join("")}
+              </ul>
+            `
+            : ""
+        }
+      `;
+    }
+
+    function getNotifications() {
+      return JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+    }
+
+    function saveNotifications(notifications) {
+      localStorage.setItem(
+        "drive2doc_notifications",
+        JSON.stringify(notifications)
+      );
+    }
+
+    function addNotification(notification) {
+      const notifications = getNotifications();
+
+      const alreadyExists = notifications.some((existing) => {
+        return (
+          existing.type === notification.type &&
+          existing.recipientName === notification.recipientName &&
+          existing.rideId === notification.rideId
+        );
+      });
+
+      if (!alreadyExists) {
+        notifications.push(notification);
+        saveNotifications(notifications);
+      }
+    }
+
+  
+
+    function loadSavedReview() {
+      const savedReview = JSON.parse(
+        localStorage.getItem("drive2doc_driver_document_review") || "null"
+      );
+
+      if (
+        !savedReview ||
+        savedReview.volunteerName !== signedInUser.name
+      ) {
+        return;
+      }
+
+      if (savedReview.overallStatus === "approved") {
+        overallStatus.textContent = "Approved";
+        overallStatusText.textContent =
+          "Your driver’s license and vehicle registration have been approved. You can now accept ride requests.";
+
+        reviewButton.textContent = "Approved";
+        return;
+      }
+
+      if (savedReview.overallStatus === "reviewing") {
+        overallStatus.textContent = "Review in progress";
+        overallStatusText.textContent =
+          "Your documents are being reviewed. Keep this page open for the demo approval.";
+
+        reviewButton.disabled = true;
+        reviewButton.textContent = "Reviewing documents...";
+      }
+    }
+
+    reviewButton.addEventListener("click", () => {
+      const license = checkDocument(
+        licenseInput.files[0],
+        "Driver’s license"
+      );
+
+      const registration = checkDocument(
+        registrationInput.files[0],
+        "Vehicle registration"
+      );
+
+      displayResult(licenseResult, license);
+      displayResult(registrationResult, registration);
+
+      if (!license.ok || !registration.ok) {
+        overallStatus.textContent = "Documents needed";
+        overallStatusText.textContent =
+          "Select both supported documents before continuing.";
+
+        localStorage.setItem(
+          "drive2doc_driver_document_review",
+          JSON.stringify({
+            volunteerName: signedInUser.name,
+            license,
+            registration,
+            overallStatus: "incomplete",
+            updatedAt: new Date().toISOString()
+          })
+        );
+
+        return;
+      }
+
+      const review = {
+        volunteerName: signedInUser.name,
+        license,
+        registration,
+        overallStatus: "reviewing",
+        submittedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(
+        "drive2doc_driver_document_review",
+        JSON.stringify(review)
+      );
+
+      overallStatus.textContent = "Review in progress";
+      overallStatusText.textContent =
+        "Your driver’s license and vehicle registration are being reviewed.";
+
+      reviewButton.disabled = true;
+      reviewButton.textContent = "Reviewing documents...";
+
+      setTimeout(() => {
+        const approvedReview = {
+          ...review,
+          overallStatus: "approved",
+          approvedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(
+          "drive2doc_driver_document_review",
+          JSON.stringify(approvedReview)
+        );
+
+        overallStatus.textContent = "Approved";
+        overallStatusText.textContent =
+          "Your driver’s license and vehicle registration have been approved. You can now accept ride requests.";
+
+        reviewButton.disabled = false;
+        reviewButton.textContent = "Approved";
+
+        addNotification({
+          id: `driver-approved-${Date.now()}`,
+          type: "driver_documents_approved",
+          recipientName: signedInUser.name,
+          title: "Driver verification approved",
+          text: "Your driver’s license and vehicle registration were approved. You can now accept ride requests.",
+          createdAt: new Date().toISOString(),
+          read: false
+        });
+
+        refreshAccountHeader();
+      }, 3000);
+    });
+
+    loadSavedReview();
+  </script>
+</body>
+</html>

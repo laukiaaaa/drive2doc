@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile &amp; Settings · Drive2Doc</title>
+
+  <style>
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #62717a;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+      --soft: #edf7f3;
+      --soft-gold: #fff7df;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(920px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 30px 0 52px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: #6c7a82;
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    button,
+    .button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 36px 0 9px;
+      color: var(--navy);
+      font-size: 40px;
+      letter-spacing: -1px;
+    }
+
+    .intro {
+      margin: 0;
+      color: #52616a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+      margin-top: 26px;
+    }
+
+    .card {
+      padding: 23px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 18px rgba(31, 57, 73, .05);
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 21px;
+    }
+
+    .helper {
+      margin: 7px 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 7px;
+      padding: 11px 12px;
+      border: 1px solid #bbc9cf;
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(47, 117, 105, .18);
+      border-color: var(--teal);
+    }
+
+    .save {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px 16px;
+      border: 1px solid var(--teal);
+      border-radius: 7px;
+      background: var(--teal);
+      color: white;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .info {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .item {
+      padding: 13px;
+      border-radius: 7px;
+      background: #f8fafb;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+
+    .value {
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 7px;
+      padding: 5px 10px;
+      border-radius: 14px;
+      background: var(--soft);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border: 1px solid #bcd8cf;
+      border-radius: 7px;
+      background: var(--soft);
+      color: #205d53;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.warning {
+      border-color: #f0d7a1;
+      background: var(--soft-gold);
+      color: #755f31;
+    }
+
+    .danger-card {
+      border-color: #e4c6c0;
+    }
+
+    .danger-button {
+      width: 100%;
+      margin-top: 12px;
+      border-color: #b65d4b;
+      color: #8c3320;
+    }
+
+    .danger-button:hover {
+      background: #fff0ed;
+    }
+
+    .count {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 28px, 920px);
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand">Drive<span>2</span>Doc</div>
+        <div class="subtitle">Profile &amp; settings</div>
+      </div>
+
+      <div class="header-actions">
+         <a class="button" href="/">Home</a>
+
+         <a
+          id="notifications-link"
+          class="button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <h1>Profile &amp; settings</h1>
+
+    <p class="intro">
+      Review your saved information and manage your Drive2Doc preferences.
+    </p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Account information</h2>
+
+        <p class="helper">
+          This information appears as your saved account profile.
+        </p>
+
+        <form id="account-form">
+          <label>
+            Full name
+            <input id="account-full-name" required>
+          </label>
+
+          <label>
+            Email or phone number
+            <input id="account-identity" required>
+          </label>
+
+          <button class="save" type="submit">
+            Save account information
+          </button>
+
+          <div
+            id="account-message"
+            class="message"
+            role="status"
+          ></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Change password</h2>
+
+        <p class="helper">
+          Choose a new password for your saved account.
+        </p>
+
+        <form id="password-form">
+          <label>
+            Current password
+            <input
+              id="current-password"
+              required
+              type="password"
+              autocomplete="current-password"
+            >
+          </label>
+
+          <label>
+            New password
+            <input
+              id="new-password"
+              required
+              type="password"
+              minlength="6"
+              autocomplete="new-password"
+            >
+          </label>
+
+          <label>
+            Confirm new password
+            <input
+              id="confirm-password"
+              required
+              type="password"
+              minlength="6"
+              autocomplete="new-password"
+            >
+          </label>
+
+          <button class="save" type="submit">
+            Change password
+          </button>
+
+          <div
+            id="password-message"
+            class="message"
+            role="status"
+          ></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Saved rider information</h2>
+
+        <p class="helper">
+          These details prefill the Request a Ride form.
+        </p>
+
+        <div id="rider-info" class="info"></div>
+      </section>
+
+      <section class="card">
+        <h2>Volunteer availability</h2>
+
+        <p class="helper">
+          These time windows are used for matching-ride notifications.
+        </p>
+
+        <div id="volunteer-info" class="info"></div>
+      </section>
+
+      <section class="card">
+        <h2>Driver verification</h2>
+
+        <p class="helper">
+          Your current driver-document review status.
+        </p>
+
+        <div id="verification-info" class="info"></div>
+      </section>
+
+      <section class="card danger-card">
+        <h2>Clear saved data</h2>
+
+        <p class="helper">
+          These actions remove information from this browser.
+        </p>
+
+        <div id="data-counts" class="count"></div>
+
+        <button
+          id="clear-rider"
+          class="danger-button"
+          type="button"
+        >
+          Clear saved rider details
+        </button>
+
+        <button
+          id="clear-volunteer"
+          class="danger-button"
+          type="button"
+        >
+          Clear volunteer availability and verification
+        </button>
+
+        <button
+          id="clear-history"
+          class="danger-button"
+          type="button"
+        >
+          Clear ride history
+        </button>
+
+        <button
+          id="clear-notifications"
+          class="danger-button"
+          type="button"
+        >
+          Clear notifications
+        </button>
+
+        <div
+          id="clear-message"
+          class="message warning"
+          role="status"
+        ></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const user = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    if (!user || !user.name) {
+      localStorage.setItem(
+        "drive2doc_after_sign_in",
+        window.location.pathname
+      );
+
+      window.location.href = "/sign-in";
+    }
+
+    const notificationsLink = document.getElementById("notifications-link");
+    const profileLink = document.getElementById("profile-link");
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const notificationDot = document.getElementById("notification-dot");
+
+    function refreshAccountHeader() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const isSignedIn = Boolean(activeUser && activeUser.name);
+
+      notificationsLink.hidden = !isSignedIn;
+      profileLink.hidden = !isSignedIn;
+      signInLink.hidden = isSignedIn;
+      signOutButton.hidden = !isSignedIn;
+
+      if (!isSignedIn) {
+        notificationDot.style.display = "none";
+        return;
+      }
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === activeUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      notificationDot.style.display =
+        unreadCount > 0 ? "inline-block" : "none";
+
+      notificationDot.textContent =
+        unreadCount > 9 ? "9+" : unreadCount;
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    refreshAccountHeader();
+
+    document.getElementById("account-full-name").value = user.name || "";
+    document.getElementById("account-identity").value = user.identity || "";
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function infoItem(label, value) {
+      return `
+        <div class="item">
+          <div class="label">${escapeHtml(label)}</div>
+          <div class="value">${escapeHtml(value || "Not saved")}</div>
+        </div>
+      `;
+    }
+
+    function showMessage(elementId, text, warning = false) {
+      const element = document.getElementById(elementId);
+
+      element.textContent = text;
+      element.className = warning
+        ? "message show warning"
+        : "message show";
+    }
+
+    function renderProfileData() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const rider = JSON.parse(
+        localStorage.getItem("drive2doc_rider_profile") || "null"
+      );
+
+      const volunteer = JSON.parse(
+        localStorage.getItem("drive2doc_volunteer_application") || "null"
+      );
+
+      const review = JSON.parse(
+        localStorage.getItem("drive2doc_driver_document_review") || "null"
+      );
+
+      const rides = JSON.parse(
+        localStorage.getItem("drive2doc_ride_requests") || "[]"
+      );
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      document.getElementById("rider-info").innerHTML =
+        rider && rider.name === activeUser.name
+          ? infoItem("Name", rider.name) +
+            infoItem("Phone number", rider.phone)
+          : `
+            <div class="item">
+              <div class="value">No rider details saved yet.</div>
+            </div>
+          `;
+
+      if (
+        volunteer &&
+        volunteer.volunteerName === activeUser.name &&
+        Array.isArray(volunteer.availability) &&
+        volunteer.availability.length > 0
+      ) {
+        document.getElementById("volunteer-info").innerHTML =
+          volunteer.availability.map((timeWindow) => {
+            return infoItem(
+              "Available",
+              `${timeWindow.date} from ${timeWindow.startTime} to ${timeWindow.endTime}`
+            );
+          }).join("");
+      } else {
+        document.getElementById("volunteer-info").innerHTML = `
+          <div class="item">
+            <div class="value">No volunteer availability saved yet.</div>
+          </div>
+        `;
+      }
+
+      let verificationText = "No documents submitted yet.";
+
+      if (review && review.volunteerName === activeUser.name) {
+        if (review.overallStatus === "approved") {
+          verificationText = "Approved";
+        } else if (review.overallStatus === "reviewing") {
+          verificationText = "Review in progress";
+        } else if (review.overallStatus === "incomplete") {
+          verificationText = "Documents needed";
+        } else {
+          verificationText = review.overallStatus || "Not submitted";
+        }
+      }
+
+      document.getElementById("verification-info").innerHTML =
+        infoItem("Status", verificationText);
+
+      const userRideCount = rides.filter((ride) => {
+        return (
+          ride.riderName === activeUser.name ||
+          ride.driverName === activeUser.name
+        );
+      }).length;
+
+      const userNotificationCount = notifications.filter((notification) => {
+        return notification.recipientName === activeUser.name;
+      }).length;
+
+      document.getElementById("data-counts").textContent =
+        `${userRideCount} saved ride record${userRideCount === 1 ? "" : "s"} · ` +
+        `${userNotificationCount} notification${userNotificationCount === 1 ? "" : "s"}`;
+    }
+
+    document.getElementById("account-form").addEventListener(
+      "submit",
+      (event) => {
+        event.preventDefault();
+
+        const oldName = user.name;
+        const newName = document
+          .getElementById("account-full-name")
+          .value
+          .trim();
+
+        const updatedUser = {
+          ...user,
+          name: newName,
+          identity: document
+            .getElementById("account-identity")
+            .value
+            .trim()
+        };
+
+        localStorage.setItem(
+          "drive2doc_signed_in_user",
+          JSON.stringify(updatedUser)
+        );
+
+        if (newName && newName !== oldName) {
+          const notifications = JSON.parse(
+            localStorage.getItem("drive2doc_notifications") || "[]"
+          ).map((notification) => {
+            if (notification.recipientName === oldName) {
+              return { ...notification, recipientName: newName };
+            }
+
+            return notification;
+          });
+
+          localStorage.setItem(
+            "drive2doc_notifications",
+            JSON.stringify(notifications)
+          );
+
+          const rider = JSON.parse(
+            localStorage.getItem("drive2doc_rider_profile") || "null"
+          );
+
+          if (rider && rider.name === oldName) {
+            localStorage.setItem(
+              "drive2doc_rider_profile",
+              JSON.stringify({ ...rider, name: newName })
+            );
+          }
+
+          const volunteer = JSON.parse(
+            localStorage.getItem("drive2doc_volunteer_application") || "null"
+          );
+
+          if (volunteer && volunteer.volunteerName === oldName) {
+            localStorage.setItem(
+              "drive2doc_volunteer_application",
+              JSON.stringify({
+                ...volunteer,
+                volunteerName: newName
+              })
+            );
+          }
+
+          const review = JSON.parse(
+            localStorage.getItem(
+              "drive2doc_driver_document_review"
+            ) || "null"
+          );
+
+          if (review && review.volunteerName === oldName) {
+            localStorage.setItem(
+              "drive2doc_driver_document_review",
+              JSON.stringify({
+                ...review,
+                volunteerName: newName
+              })
+            );
+          }
+        }
+
+        showMessage(
+          "account-message",
+          "Account information saved."
+        );
+
+        window.location.reload();
+      }
+    );
+
+    document.getElementById("password-form").addEventListener(
+      "submit",
+      (event) => {
+        event.preventDefault();
+
+        const currentPassword =
+          document.getElementById("current-password").value;
+
+        const newPassword =
+          document.getElementById("new-password").value;
+
+        const confirmPassword =
+          document.getElementById("confirm-password").value;
+
+        const savedUser = JSON.parse(
+          localStorage.getItem("drive2doc_signed_in_user") || "null"
+        );
+
+        if (
+          savedUser &&
+          savedUser.password &&
+          currentPassword !== savedUser.password
+        ) {
+          showMessage(
+            "password-message",
+            "The current password does not match.",
+            true
+          );
+
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          showMessage(
+            "password-message",
+            "Your new password must have at least 6 characters.",
+            true
+          );
+
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          showMessage(
+            "password-message",
+            "Your new passwords do not match.",
+            true
+          );
+
+          return;
+        }
+
+        localStorage.setItem(
+          "drive2doc_signed_in_user",
+          JSON.stringify({
+            ...savedUser,
+            password: newPassword
+          })
+        );
+
+        document.getElementById("password-form").reset();
+
+        showMessage(
+          "password-message",
+          "Password changed successfully."
+        );
+      }
+    );
+
+    document.getElementById("clear-rider").addEventListener(
+      "click",
+      () => {
+        const confirmed = window.confirm(
+          "Clear your saved rider details from this browser?"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        localStorage.removeItem("drive2doc_rider_profile");
+
+        showMessage(
+          "clear-message",
+          "Saved rider details were cleared.",
+          true
+        );
+
+        renderProfileData();
+      }
+    );
+
+    document.getElementById("clear-volunteer").addEventListener(
+      "click",
+      () => {
+        const confirmed = window.confirm(
+          "Clear your volunteer availability and driver verification status?"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        localStorage.removeItem("drive2doc_volunteer_application");
+        localStorage.removeItem("drive2doc_driver_document_review");
+
+        showMessage(
+          "clear-message",
+          "Volunteer availability and verification were cleared.",
+          true
+        );
+
+        renderProfileData();
+      }
+    );
+
+    document.getElementById("clear-history").addEventListener(
+      "click",
+      () => {
+        const confirmed = window.confirm(
+          "Clear all saved ride requests and ride history? This cannot be undone."
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        localStorage.removeItem("drive2doc_ride_requests");
+        localStorage.removeItem("drive2doc_current_ride_id");
+
+        showMessage(
+          "clear-message",
+          "Ride history was cleared.",
+          true
+        );
+
+        renderProfileData();
+      }
+    );
+
+    document.getElementById("clear-notifications").addEventListener(
+      "click",
+      () => {
+        const confirmed = window.confirm(
+          "Clear all notifications for every account on this browser?"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        localStorage.removeItem("drive2doc_notifications");
+
+        showMessage(
+          "clear-message",
+          "Notifications were cleared.",
+          true
+        );
+
+        refreshAccountHeader();
+        renderProfileData();
+      }
+    );
+
+    renderProfileData();
+  </script>
+</body>
+</html>

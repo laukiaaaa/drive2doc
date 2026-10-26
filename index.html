@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Drive2Doc</title>
+
   <style>
     :root {
       --navy: #183b55;
@@ -15,76 +16,391 @@
       --page: #f4f6f7;
       --soft-teal: #e7f2ef;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--page); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
-    .page { width: min(960px, calc(100% - 36px)); margin: 0 auto; padding: 34px 0 54px; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-bottom: 21px; border-bottom: 1px solid var(--line); }
-    .brand { color: var(--navy); font-size: 29px; font-weight: 800; letter-spacing: -1px; }
-    .brand span { color: var(--orange); }
-    .subtitle { margin-top: 4px; color: var(--muted); font-size: 14px; }
-    .hero { display: grid; grid-template-columns: 1fr 0.92fr; gap: 42px; padding: 70px 0 34px; align-items: center; }
-    h1 { margin: 0; max-width: 590px; color: var(--navy); font-size: clamp(34px, 5vw, 51px); line-height: 1.1; letter-spacing: -1.4px; }
-    .hero p { max-width: 595px; margin: 17px 0 0; color: #52616a; font-size: 17px; line-height: 1.62; }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-    .button { display: inline-block; border-radius: 7px; padding: 13px 18px; text-decoration: none; font-size: 15px; font-weight: 700; transition: transform .15s ease, background .15s ease; }
-    .button:hover { transform: translateY(-1px); }
-    .primary { background: var(--teal); color: white; border: 1px solid var(--teal); }
-    .secondary { color: var(--navy); background: white; border: 1px solid var(--navy); }
-    .card { background: white; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 18px rgba(31, 57, 73, .06); padding: 26px; }
-    .card h2 { margin: 0 0 21px; color: var(--navy); font-size: 22px; }
-    .step { display: grid; grid-template-columns: 28px 1fr; gap: 12px; margin-top: 18px; }
-    .bubble { width: 28px; height: 28px; border-radius: 50%; background: var(--soft-teal); color: var(--teal); text-align: center; line-height: 28px; font-size: 13px; font-weight: 800; }
-    .step strong { color: var(--ink); font-size: 15px; }
-    .step p { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
-    .notice { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-    footer { margin-top: 35px; padding-top: 18px; color: #748088; font-size: 12px; border-top: 1px solid var(--line); }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 34px 0 54px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 21px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 29px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .account-button {
+      display: inline-block;
+      padding: 10px 15px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 0.92fr;
+      gap: 42px;
+      align-items: center;
+      padding: 70px 0 34px;
+    }
+
+    h1 {
+      max-width: 590px;
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(34px, 5vw, 51px);
+      line-height: 1.1;
+      letter-spacing: -1.4px;
+    }
+
+    .hero p {
+      max-width: 595px;
+      margin: 17px 0 0;
+      color: #52616a;
+      font-size: 17px;
+      line-height: 1.62;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 13px 18px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .button:hover,
+    .account-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      border: 1px solid var(--teal);
+      background: var(--teal);
+      color: white;
+    }
+
+    .secondary {
+      border: 1px solid var(--navy);
+      background: white;
+      color: var(--navy);
+    }
+
+    .card {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 18px rgba(31, 57, 73, .06);
+    }
+
+    .card h2 {
+      margin: 0 0 21px;
+      color: var(--navy);
+      font-size: 22px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .bubble {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--soft-teal);
+      color: var(--teal);
+      text-align: center;
+      line-height: 28px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .step strong {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .step p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    footer {
+      margin-top: 35px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: #748088;
+      font-size: 12px;
+    }
+
     @media (max-width: 720px) {
-      .page { width: min(100% - 30px, 960px); padding-top: 23px; }
-      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 48px; }
-      .card { padding: 21px; }
-      header { align-items: flex-start; flex-direction: column; }
+      .page {
+        width: min(100% - 30px, 960px);
+        padding-top: 23px;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-top: 48px;
+      }
+
+      .card {
+        padding: 21px;
+      }
     }
   </style>
 </head>
+
 <body>
   <main class="page">
     <header>
       <div>
         <div class="brand">Drive<span>2</span>Doc</div>
-        <div class="subtitle">Community transportation for medical appointments</div>
+
+        <div class="subtitle">
+          Community transportation for medical appointments
+        </div>
       </div>
-      <a class="button secondary" href="/volunteer">Volunteer to drive</a>
+
+      <div class="header-actions">
+        <a
+          id="notifications-link"
+          class="account-button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="account-button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="account-button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="account-button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
     </header>
 
     <section class="hero">
       <div>
         <h1>Getting to care should not depend on having a ride.</h1>
-        <p>Drive2Doc connects people who need transportation to scheduled medical appointments with community volunteers who can help them get there.</p>
+
+        <p>
+          Drive2Doc connects people who need transportation to scheduled
+          medical appointments with community volunteers who can help them
+          get there.
+        </p>
+
         <div class="actions">
-          <a class="button primary" href="/request-ride">Request a ride</a>
-          <a class="button secondary" href="/volunteer">Volunteer to drive</a>
+          <a class="button primary protected-link" href="/request-ride">
+            Request a ride
+          </a>
+
+          <a class="button secondary protected-link" href="/volunteer">
+            Volunteer to drive
+          </a>
+
+          <a class="button secondary protected-link" href="/volunteer-rides">
+            Available ride requests
+          </a>
         </div>
       </div>
 
       <section class="card" aria-label="How Drive2Doc works">
         <h2>How it works</h2>
+
         <div class="step">
           <div class="bubble">1</div>
-          <div><strong>Request a ride</strong><p>Enter an appointment time and pickup location.</p></div>
+          <div>
+            <strong>Request a ride</strong>
+            <p>Enter an appointment time, pickup location, and any support needed.</p>
+          </div>
         </div>
+
         <div class="step">
           <div class="bubble">2</div>
-          <div><strong>A volunteer accepts</strong><p>An approved volunteer chooses a trip that fits their schedule.</p></div>
+          <div>
+            <strong>A volunteer accepts</strong>
+            <p>Approved volunteers can review and accept open ride requests.</p>
+          </div>
         </div>
+
         <div class="step">
           <div class="bubble">3</div>
-          <div><strong>Confirm the details</strong><p>The rider and volunteer confirm the trip before leaving.</p></div>
+          <div>
+            <strong>Receive updates</strong>
+            <p>Riders and volunteers receive notifications when ride details change.</p>
+          </div>
         </div>
       </section>
     </section>
 
-    <p class="notice">Drive2Doc supports planned, non-emergency transportation for medical appointments.</p>
-    <footer>Drive2Doc · Community transportation for medical appointments</footer>
+    <footer>
+      Drive2Doc · Community transportation for medical appointments
+    </footer>
   </main>
+
+  <script>
+    const signedInUser = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const profileLink = document.getElementById("profile-link");
+    const notificationsLink = document.getElementById("notifications-link");
+    const notificationDot = document.getElementById("notification-dot");
+
+    if (signedInUser && signedInUser.name) {
+      signInLink.hidden = true;
+      signOutButton.hidden = false;
+      profileLink.hidden = false;
+      notificationsLink.hidden = false;
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === signedInUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      if (unreadCount > 0) {
+        notificationDot.style.display = "inline-block";
+        notificationDot.textContent = unreadCount > 9 ? "9+" : unreadCount;
+      }
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    document.querySelectorAll(".protected-link").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (signedInUser && signedInUser.name) {
+          return;
+        }
+
+        event.preventDefault();
+
+        localStorage.setItem(
+          "drive2doc_after_sign_in",
+          link.getAttribute("href")
+        );
+
+        window.location.href = "/sign-in";
+      });
+    });
+  </script>
 </body>
 </html>

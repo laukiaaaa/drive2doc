@@ -4,36 +4,606 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Request a Ride · Drive2Doc</title>
+
   <style>
-    body { margin: 0; background: #f4f6f7; color: #33454f; font-family: Arial, Helvetica, sans-serif; }
-    .page { width: min(780px, calc(100% - 36px)); margin: 0 auto; padding: 32px 0 50px; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid #d5dfe4; }
-    .brand { color: #183b55; font-size: 28px; font-weight: 800; letter-spacing: -1px; }
-    .brand span { color: #c96a3b; }
-    .subtitle { margin-top: 4px; color: #6c7a82; font-size: 13px; }
-    a { border: 1px solid #183b55; border-radius: 7px; padding: 11px 15px; color: #183b55; background: white; text-decoration: none; font-size: 14px; font-weight: 700; }
-    h1 { margin: 36px 0 10px; color: #183b55; font-size: 39px; letter-spacing: -1px; }
-    p { color: #52616a; font-size: 16px; line-height: 1.55; }
-    .card { margin-top: 27px; padding: 25px; background: white; border: 1px solid #d5dfe4; border-radius: 10px; box-shadow: 0 4px 18px rgba(31, 57, 73, .05); }
-    .card h2 { margin: 0; color: #183b55; font-size: 21px; }
-    .card p { margin-bottom: 0; font-size: 14px; }
+    :root {
+      --navy: #183b55;
+      --teal: #2f7569;
+      --orange: #c96a3b;
+      --ink: #33454f;
+      --muted: #62717a;
+      --line: #d5dfe4;
+      --page: #f4f6f7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: min(860px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 32px 0 52px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: #6c7a82;
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--navy);
+      border-radius: 7px;
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .notification-dot {
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      line-height: 18px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 36px 0 10px;
+      color: var(--navy);
+      font-size: 40px;
+      letter-spacing: -1px;
+    }
+
+    .intro {
+      max-width: 640px;
+      color: #52616a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .card {
+      margin-top: 27px;
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 18px rgba(31, 57, 73, .05);
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 21px;
+    }
+
+    .helper {
+      margin: 7px 0 19px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      margin-top: 7px;
+      padding: 11px 12px;
+      border: 1px solid #bbc9cf;
+      border-radius: 6px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: 3px solid rgba(47, 117, 105, .18);
+      border-color: var(--teal);
+    }
+
+    .checks {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .check input {
+      width: 17px;
+      height: 17px;
+      margin: 1px 0 0;
+      accent-color: var(--teal);
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px 16px;
+      border: 1px solid var(--teal);
+      border-radius: 7px;
+      background: var(--teal);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .primary:hover {
+      background: #276358;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px 13px;
+      border-radius: 7px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      display: block;
+      border: 1px solid #ebc5bb;
+      background: #fff0ed;
+      color: #8c3320;
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 28px, 860px);
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main class="page">
     <header>
       <div>
         <div class="brand">Drive<span>2</span>Doc</div>
-        <div class="subtitle">Community transportation for medical appointments</div>
+        <div class="subtitle">
+          Community transportation for medical appointments
+        </div>
       </div>
-      <a href="/">Back to home</a>
+
+      <div class="header-actions">
+         <a class="button" href="/">Home</a>
+
+         <a
+          id="notifications-link"
+          class="button"
+          href="/notifications"
+          hidden
+        >
+          Notifications
+          <span id="notification-dot" class="notification-dot"></span>
+        </a>
+
+        <a
+          id="profile-link"
+          class="button"
+          href="/profile"
+          hidden
+        >
+          Profile &amp; settings
+        </a>
+
+        <a
+          id="sign-in-link"
+          class="button"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+
+        <button
+          id="sign-out-button"
+          class="button"
+          type="button"
+          hidden
+        >
+          Sign out
+        </button>
+      </div>
     </header>
+
     <h1>Request a ride</h1>
-    <p>Ride-requesting will be the next feature. The volunteer application is ready to test now.</p>
-    <section class="card">
-      <h2>What a rider request will include</h2>
-      <p>Pickup location, appointment destination, appointment date and time, return-trip needs, and accessibility or mobility needs. Drive2Doc can use those details to identify compatible volunteer availability.</p>
-    </section>
+
+    <p class="intro">
+      Tell us where and when you need to go. Volunteers whose saved
+      availability matches your trip can receive a notification.
+    </p>
+
+    <form id="ride-form" novalidate>
+      <section class="card">
+        <h2>Rider information</h2>
+        <p class="helper">
+          This helps a volunteer confirm the right ride request.
+        </p>
+
+        <div class="fields">
+          <label>
+            Full name
+            <input id="rider-name" required autocomplete="name">
+          </label>
+
+          <label>
+            Phone number
+            <input id="rider-phone" required type="tel" autocomplete="tel">
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Trip details</h2>
+        <p class="helper">Enter the scheduled appointment information.</p>
+
+        <div class="fields">
+          <label>
+            Appointment date
+            <input id="appointment-date" required type="date">
+          </label>
+
+          <label>
+            Appointment time
+            <input id="appointment-time" required type="time">
+          </label>
+
+          <label class="full">
+            Pickup location
+            <input
+              id="pickup"
+              required
+              placeholder="Street address or pickup location"
+            >
+          </label>
+
+          <label class="full">
+            Appointment destination
+            <input
+              id="destination"
+              required
+              placeholder="Clinic, hospital, or appointment location"
+            >
+          </label>
+
+          <label>
+            Preferred pickup time
+            <input id="pickup-time" required type="time">
+          </label>
+
+          <label>
+            Return ride
+            <select id="return-ride">
+              <option value="yes">Yes, I need a return ride</option>
+              <option value="no">No return ride needed</option>
+            </select>
+          </label>
+
+          <label class="full">
+            Notes for the volunteer
+            <textarea
+              id="notes"
+              placeholder="Optional trip or pickup details"
+            ></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Accessibility or mobility needs</h2>
+
+        <p class="helper">
+          Select any assistance that would make this ride more comfortable.
+        </p>
+
+        <div class="checks">
+          <label class="check">
+            <input type="checkbox" name="mobility" value="cane">
+            Cane assistance
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="mobility" value="walker">
+            Walker assistance
+          </label>
+
+          <label class="check">
+            <input
+              type="checkbox"
+              name="mobility"
+              value="folding_wheelchair"
+            >
+            Space for a folding wheelchair
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="mobility" value="door_to_door">
+            Door-to-door assistance
+          </label>
+        </div>
+
+        <button class="primary" type="submit">Submit ride request</button>
+        <div id="message" class="message" role="status"></div>
+      </section>
+    </form>
   </main>
+
+  <script>
+    const signedInUser = JSON.parse(
+      localStorage.getItem("drive2doc_signed_in_user") || "null"
+    );
+
+    if (!signedInUser || !signedInUser.name) {
+      localStorage.setItem(
+        "drive2doc_after_sign_in",
+        window.location.pathname
+      );
+
+      window.location.href = "/sign-in";
+    }
+
+    const notificationsLink = document.getElementById("notifications-link");
+    const profileLink = document.getElementById("profile-link");
+    const signInLink = document.getElementById("sign-in-link");
+    const signOutButton = document.getElementById("sign-out-button");
+    const notificationDot = document.getElementById("notification-dot");
+
+    function refreshAccountHeader() {
+      const activeUser = JSON.parse(
+        localStorage.getItem("drive2doc_signed_in_user") || "null"
+      );
+
+      const isSignedIn = Boolean(activeUser && activeUser.name);
+
+      notificationsLink.hidden = !isSignedIn;
+      profileLink.hidden = !isSignedIn;
+      signInLink.hidden = isSignedIn;
+      signOutButton.hidden = !isSignedIn;
+
+      if (!isSignedIn) {
+        return;
+      }
+
+      const notifications = JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+
+      const unreadCount = notifications.filter((notification) => {
+        return (
+          notification.recipientName === activeUser.name &&
+          !notification.read
+        );
+      }).length;
+
+      notificationDot.style.display =
+        unreadCount > 0 ? "inline-block" : "none";
+
+      notificationDot.textContent =
+        unreadCount > 9 ? "9+" : unreadCount;
+    }
+
+    signOutButton.addEventListener("click", () => {
+      localStorage.removeItem("drive2doc_signed_in_user");
+      window.location.href = "/";
+    });
+
+    refreshAccountHeader();
+
+    const savedRider = JSON.parse(
+      localStorage.getItem("drive2doc_rider_profile") || "null"
+    );
+
+    if (savedRider) {
+      document.getElementById("rider-name").value = savedRider.name || "";
+      document.getElementById("rider-phone").value = savedRider.phone || "";
+    } else {
+      document.getElementById("rider-name").value = signedInUser.name || "";
+    }
+
+    function getNotifications() {
+      return JSON.parse(
+        localStorage.getItem("drive2doc_notifications") || "[]"
+      );
+    }
+
+    function saveNotifications(notifications) {
+      localStorage.setItem(
+        "drive2doc_notifications",
+        JSON.stringify(notifications)
+      );
+    }
+
+    function notificationAlreadyExists(
+      notifications,
+      type,
+      recipientName,
+      rideId
+    ) {
+      return notifications.some((notification) => {
+        return (
+          notification.type === type &&
+          notification.recipientName === recipientName &&
+          notification.rideId === rideId
+        );
+      });
+    }
+
+    const form = document.getElementById("ride-form");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      message.className = "message";
+      message.textContent = "";
+
+      if (!form.checkValidity()) {
+        message.textContent = "Please complete all required fields.";
+        message.className = "message error";
+        form.reportValidity();
+        return;
+      }
+
+      const mobilityNeeds = [
+        ...document.querySelectorAll('input[name="mobility"]:checked')
+      ].map((input) => input.value);
+
+      const riderProfile = {
+        name: document.getElementById("rider-name").value.trim(),
+        phone: document.getElementById("rider-phone").value.trim()
+      };
+
+      localStorage.setItem(
+        "drive2doc_rider_profile",
+        JSON.stringify(riderProfile)
+      );
+
+      const rides = JSON.parse(
+        localStorage.getItem("drive2doc_ride_requests") || "[]"
+      );
+
+      const ride = {
+        id: `ride-${Date.now()}`,
+        riderName: riderProfile.name,
+        riderPhone: riderProfile.phone,
+        appointmentDate: document.getElementById("appointment-date").value,
+        appointmentTime: document.getElementById("appointment-time").value,
+        pickup: document.getElementById("pickup").value.trim(),
+        destination: document.getElementById("destination").value.trim(),
+        pickupTime: document.getElementById("pickup-time").value,
+        returnRide: document.getElementById("return-ride").value,
+        notes: document.getElementById("notes").value.trim(),
+        mobilityNeeds,
+        status: "open",
+        driverName: "",
+        acceptedAt: "",
+        submittedAt: new Date().toISOString()
+      };
+
+      rides.push(ride);
+
+      localStorage.setItem(
+        "drive2doc_ride_requests",
+        JSON.stringify(rides)
+      );
+
+      localStorage.setItem("drive2doc_current_ride_id", ride.id);
+
+      const notifications = getNotifications();
+
+      notifications.push({
+        id: `ride-requested-${ride.id}`,
+        type: "ride_requested",
+        recipientName: signedInUser.name,
+        rideId: ride.id,
+        title: "Ride request submitted",
+        text: "Your ride request was submitted. Volunteers can now review it.",
+        createdAt: new Date().toISOString(),
+        read: false
+      });
+
+      saveNotifications(notifications);
+      window.location.href = "/ride-status";
+    });
+  </script>
 </body>
 </html>
